@@ -9,21 +9,21 @@ Multi-view image generation in autonomous driving requires cross-view consistenc
 ## Performence
 :star2: <b>BEV-VAE w/ DiT</b> supports viewing reconstructed or generated driving scenes from different perspectives !
 ### Reconstruction on AV2
-<video src="./assets/reconstruction_on_av2-val.mp4" controls autoplay loop muted width="600">
+<video src="https://github.com/Czm369/bev-vae/blob/main/assets/reconstruction_on_av2-val.mp4" controls autoplay loop muted width="600">
   Your browser does not support the video tag.
 </video>
 
 ### Generation on AV2
-<video src="./assets/generation_on_av2-val.mp4" controls autoplay loop muted width="600">
+<video src="https://github.com/Czm369/bev-vae/blob/main/assets/generation_on_av2-val.mp4" controls autoplay loop muted width="600">
   Your browser does not support the video tag.
 </video>
 
 ### Reconstruction on nuScenes
-<video src="./assets/reconstruction_on_nuscenes-val.mp4" controls autoplay loop muted width="600">
+<video src="https://github.com/Czm369/bev-vae/blob/main/assets/reconstruction_on_nuscenes-val.mp4" controls autoplay loop muted width="600">
   Your browser does not support the video tag.
 </video>
 
 ### Generation on nuScenes
-<video src="./assets/generation_on_nuscenes-val.mp4" controls autoplay loop muted width="600">
+<video src="https://github.com/Czm369/bev-vae/blob/main/assets/generation_on_nuscenes-val.mp4" controls autoplay loop muted width="600">
   Your browser does not support the video tag.
 </video>
