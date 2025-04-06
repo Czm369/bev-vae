@@ -19,11 +19,7 @@ Multi-view image generation in autonomous driving requires cross-view consistenc
 </video>
 
 ### Reconstruction on nuScenes
-<video src="https://github.com/Czm369/bev-vae/blob/main/assets/reconstruction_on_nuscenes-val.mp4" controls autoplay loop muted width="600">
-  Your browser does not support the video tag.
-</video>
+https://github.com/user-attachments/assets/45750475-50d6-44b0-8fb1-b5e78956abb7
 
 ### Generation on nuScenes
-<video src="https://github.com/Czm369/bev-vae/blob/main/assets/generation_on_nuscenes-val.mp4" controls autoplay loop muted width="600">
-  Your browser does not support the video tag.
-</video>
+https://github.com/user-attachments/assets/dbf283de-b430-47b1-b6e1-6b00848b5990
