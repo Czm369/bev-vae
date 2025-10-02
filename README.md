@@ -1,57 +1,106 @@
-# BEV-VAE: Multi-view Image Generation with Spatial Consistency for Autonomous Driving
+# Scalable and Generalizable Autonomous Driving Scene Synthesis
 [Zeming Chen](https://scholar.google.com/citations?hl=zh-CN&user=u_KlPbgAAAAJ), [Hang Zhao](https://scholar.google.com/citations?hl=zh-CN&user=DmahiOYAAAAJ).
 ## Abstract
 <details>
-<summary><b>TL; DR</b> BEV-VAE w/ DiT generates multi-view images with spatial consistency in BEV latent space, following the scale law.</summary>
-Multi-view image generation in autonomous driving demands consistent 3D scene understanding across camera views. 
-Most existing methods treat this problem as a 2D image set generation task, lacking explicit 3D modeling. 
-However, we argue that a structured representation is crucial for scene generation, especially for autonomous driving applications. 
-This paper proposes BEV-VAE for consistent and controllable view synthesis. BEV-VAE first trains a multiview image variational autoencoder for a compact and unified BEV latent space and then generates the scene with a latent diffusion transformer. BEV-VAE supports arbitrary view generation given camera configurations, and optionally 3D layouts.
-Experiments on nuScenes and Argoverse 2 (AV2) show strong performance in both 3D consistent reconstruction and generation.
+<summary><b>TL; DR</b> We introduce BEV-VAE, a variational autoencoder that unifies multi-view images into a BEV representation for scalable and generalizable autonomous driving scene synthesis. </summary>
+Generative modeling has shown remarkable success in vision and language, inspiring research on synthesizing autonomous driving scenes. 
+Existing multi-view synthesis approaches commonly operate in image latent spaces with cross-attention to enforce spatial consistency, but they are tightly bound to camera configurations, which limits dataset scalability and model generalization.
+We propose BEV-VAE, a variational autoencoder that unifies multi-view images into a compact bird’s-eye-view (BEV) representation, enabling encoding from arbitrary camera layouts and decoding to any desired viewpoint. 
+Through multi-view image reconstruction and novel view synthesis, we show that BEV-VAE effectively fuses multi-view information and accurately models spatial structure. 
+This capability allows it to generalize across camera configurations and facilitates scalable training on diverse datasets.
+Within the latent space of BEV-VAE, a Diffusion Transformer (DiT) generates BEV representations conditioned on 3D object layouts, enabling multi-view image synthesis with enhanced spatial consistency on nuScenes and achieving the first complete seven-view synthesis on AV2.
+Finally, synthesized imagery significantly improves the perception performance of BEVFormer, highlighting the utility of scalable and generalizable scene synthesis for autonomous driving.
 </details>
 
 ## Method
+### Overall architecture of BEV-VAE with DiT for multi-view image generation.
 ![framework](./assets/framework.png)
-<b>Overall architecture of BEV-VAE with DiT for multi-view image generation.</b> In Stage 1, BEV-VAE learns to encode multi-view images into a spatially compact latent space in BEV and reconstruct them, ensuring spatial consistency. In Stage 2, DiT is trained with Classifier-Free Guidance (CFG) in this latent space to generate BEV representations from random noise, which are then decoded into multi-view images.
-## Performence
-:star2: <b>BEV-VAE w/ DiT</b> supports viewing reconstructed or generated driving scenes from different perspectives! 
-### Reconstruction on AV2
-The AV2 dataset consists of <b>7</b> cameras, with the front camera rotated by 90°. To simplify visualization, the top part of the front view is cropped.
-You can <b>click on the image below</b> to watch the video showing the ego view rotated 15° to the left and right.
+In Stage 1, BEV-VAE learns to encode multi-view images into a spatially compact latent space in BEV and reconstruct them, ensuring spatial consistency. In Stage 2, DiT is trained with Classifier-Free Guidance (CFG) in this latent space to generate BEV representations from random noise, which are then decoded into multi-view images.
 
-[![Reconstruction on av2-val](./assets/rec_on_av2-val.png)](https://www.bilibili.com/video/BV1ezdTYREHf)
+## Experiments
 
-### Generation on AV2
-<b>Row 1</b> shows real images from the validation set, <b>Row 2</b> shows the corresponding reconstructed images, <b>Row 3</b> shows images generated from the same 3D bounding boxes, and <b>each row after that</b> shows generated images after removing a specific vehicle, with <b>the removed vehicles indicated by numerical labels.</b>
-<b>Notice:</b> The same 3D bounding box may produce different objects across different generated images.
-You can <b>click on the image below</b> to watch the video showing the ego view rotated 15° to the left and right.
+### Datasets
+This study uses four multi-camera autonomous driving datasets that differ substantially in scale, camera configuration, annotated categories, and recording locations. Despite these differences, all datasets provide full 360° coverage of the surrounding scene.
 
-[![Generation on av2-val](./assets/gen_on_av2-val.png)](https://www.bilibili.com/video/BV1ZhdTYcEi8)
+| Dataset  | #Frames | #Cameras | #Classes |                    Recording Locations                       |
+|:--------:|:-------:|:--------:|:--------:|:------------------------------------------------------------:|
+|   WS101  |   17k   |    5     |    0     |               London, San Francisco Bay Area                 | 
+| nuScenes |   155k  |    6     |    23    |          Boston, Pittsburgh, Las Vegas, Singapore            | 
+|   AV2    |   224k  |    7     |    30    | Austin, Detroit, Miami, Pittsburgh, Palo Alto, Washington DC | 
+|  nuPlan  |  3.11M  |    8     |    7     |          Boston, Pittsburgh, Las Vegas, Singapore            | 
 
-### Reconstruction on nuScenes
-The nuScenes dataset consists of <b>6</b> cameras, demonstrating that BEV-VAE can support autonomous driving data with different numbers of cameras — as long as the views together cover 360°.
-You can <b>click on the image below</b> to watch the video showing the ego view rotated 15° to the left and right.
+We introduce a new hybrid autonomous driving dataset configuration, <b>PAS</b>, which combines nu<b>P</b>lan, <b>A</b>V2, and nu<b>S</b>cenes.
 
-[![Reconstruction on nuscenes-val](./assets/rec_on_nusc-val.png)](https://www.bilibili.com/video/BV19zdTYREiH)
+### Multi-view Image Reconstruction
+BEV-VAE learns unified BEV representations by reconstructing multi-view images, integrating semantics from all camera views while modeling 3D spatial structure. Reconstruction metrics provide an indirect evaluation of the quality of the learned BEV representations. For reference, we compare with SD-VAE, a foundational model trained on LAION-5B, which encodes a single $256\times256$ image into a $32 \times32\times4$ latent. In contrast, BEV-VAE encodes multiple $256\times256$ views into a $32\times32\times16$ BEV latent, facing the more challenging task of modeling underlying 3D structure.
+#### Reconstruction metrics on nuScenes compared with SD-VAE.
+|  Model  | Training | Validation | PSNR $\uparrow$ | SSIM $\uparrow$ | MVSC $\uparrow$ | rFID $\downarrow$ |
+|:-------:|:--------:|:----------:|:---------------:|:---------------:|:---------------:|:-----------------:|
+| SD-VAE  | LAION-5B |  nuScenes  |   <b>29.63</b>  |  <b>0.8283</b>  |     0.9292      |    <b>2.18</b>    |
+| BEV-VAE | nuScenes |  nuScenes  |      26.13      |     0.7231      |     0.9250      |       6.66        |
+| BEV-VAE |   PAS    |  nuScenes  |      28.88      |     0.8028      |  <b>0.9756</b>  |       4.74        |
 
-### Generation on nuScenes
-<b>Row 1</b> shows real images from the validation set, <b>Row 2</b> shows the corresponding reconstructed images, <b>Row 3</b> shows images generated from the same 3D bounding boxes, and <b>each row after that</b> shows generated images after removing a specific vehicle, with <b>the removed vehicles indicated by numerical labels.</b>
-<b>Notice:</b> The same 3D bounding box may produce different objects across different generated images.
-You can <b>click on the image below</b> to watch the video showing the ego view rotated 15° to the left and right.
+#### Reconstruction metrics on AV2 compared with SD-VAE.
+|  Model  | Training | Validation | PSNR $\uparrow$ | SSIM $\uparrow$ | MVSC $\uparrow$ | rFID $\downarrow$ |
+|:-------:|:--------:|:----------:|:---------------:|:---------------:|:---------------:|:-----------------:|
+| SD-VAE  | LAION-5B |    AV2     |   <b>27.81</b>  |  <b>0.8229</b>  |     0.8962      |    <b>1.87</b>    |
+| BEV-VAE |   AV2    |    AV2     |      26.02      |     0.7651      |     0.9197      |       4.15        |
+| BEV-VAE |   PAS    |    AV2     |      27.29      |     0.8028      |  <b>0.9461</b>  |       2.82        |
 
-[![Generation on nuscenes-val](./assets/gen_on_nusc-val.png)](https://www.bilibili.com/video/BV1ezdTYRE5T)
+SD-VAE focuses on per-view image fidelity, whereas PAS-trained BEV-VAE achieves superior multi-view spatial consistency (MVSC).
+#### Multi-view image reconstruction on nuScenes
+<b>Click the image below</b> to watch the ego view rotate 360° horizontally.
+[![rec_nusc](./assets/rec_nusc_more.png)](https://www.bilibili.com/video/BV1drHNzLEi8)
 
-### Rotating Camera Extrinsics to Render New Views on AV2
-<b>Row 1</b> presents validation images, and <b>Row 2</b> shows reconstructions. <b>Rows 3 and 4</b> display reconstructed images with all cameras rotated 15° left and 15° right, respectively.
+#### Multi-view image reconstruction on AV2
+<b>Click the image below</b> to watch the ego view rotate 360° horizontally.
+[![rec_av2](./assets/rec_av2_more.png)](https://www.bilibili.com/video/BV1drHNzLEr3)
 
-![Rotaing the ego on AV2](./assets/gen_rotating_ego.png)
-### Rotating the Orientation of a Specific Vehicle on AV2
-<b>Row 1</b> presents validation images, and <b>Row 2</b> shows generated images. <b>Rows 3 and 4</b> depict the same vehicle rotated 15° clockwise and counterclockwise on the ego vehicle's horizontal plane.
+#### Multi-view image reconstruction on nuPlan
+<b>Click the image below</b> to watch the ego view rotate 360° horizontally.
+[![rec_nupl](./assets/rec_nupl_more.png)](https://www.bilibili.com/video/BV1irHNzjEaZ)
 
-![Rotaing a vehicle on AV2](./assets/gen_rotating_vehicle.png)
-###  Reconstruction across Different Latent Dimensions on AV2
-<b>Row 1</b> shows images from the validation set, while <b>Rows 2-5</b> display BEV-VAE reconstructions with latent dimensions of 4, 8, 16, and 32. With higher latent dimensions, the reconstruction more accurately preserves fine details, such as the manhole covers in the white box.
-![Rotaing new views on AV2](./assets/rec_crossing_dim.png)
+### Novel View Synthesis
+![rec_rot](./assets/rec_rot.png)
+<b>Novel view synthesis via camera pose modifications on nuScenes.</b> Row 1 shows real images from the nuScenes validation set, and Rows 2-3 show reconstructions with all cameras rotated 30° left and right, where the cement truck and tower crane truck remain consistent across views without deformation. 
+
+![nvs_cam](./assets/nvs_cam.png)
+<b>Novel view synthesis cross camera configurations.</b> Row 1 presents real images from the nuPlan validation set. Row 2 and Row 3 show reconstructions using camera parameters from AV2 and nuScenes, respectively. The model captures dataset-specific vehicle priors: AV2 reconstructions include both the front and rear of the ego vehicle, while nuScenes reconstructions mainly show the rear (with the rightmost image corresponding to the rear-view camera for alignment).
+
+### Zero-shot BEV Representation Construction
+
+![rec_ws101](./assets/rec_ws101.png)
+<b>Zero-shot BEV representation construction on WS101.</b> Row 1 shows real images from the WS101 validation set. Rows 2 and 3 show zero-shot and fine-tuned reconstructions, respectively, with object shapes preserved in the zero-shot results and further sharpened after fine-tuning.
+|  Model  |  Training   | Validation | PSNR $\uparrow$ | SSIM $\uparrow$ | MVSC $\uparrow$ | rFID $\downarrow$ |
+|:-------:|:-----------:|:----------:|:---------------:|:---------------:|:---------------:|:-----------------:|
+| SD-VAE  |  LAION-5B   |   WS101    |      23.38      |  <b>0.7050</b>  |     0.8580      |    <b>4.59</b>    |
+| BEV-VAE |     PAS     |   WS101    |      16.6       |     0.3998      |     0.8309      |       56.7        |
+| BEV-VAE | PAS + WS101 |   WS101    |   <b>23.46</b>  |     0.6844      |  <b>0.9505</b>  |       13.78       |
+
+<b>Zero-shot and fine-tuned reconstruction metrics on WS101 compared with SD-VAE.</b>
+
+### Autonomous Driving Scene Synthesis
+#### Autonomous driving scene synthesis from AV2 to nuScenes.
+![gen_av2](./assets/gen_av2.png)
+BEV-VAE with DiT generates a BEV representation from 3D bounding boxes of AV2, which can then be decoded into multi-view images according to the camera configurations of nuScenes.
+
+#### Multi-view image generation on AV2 with 3D object layout editing.
+<b>Click the image below</b> to watch the ego view rotate 360° horizontally.
+[![gen_drop_av2](./assets/gen_drop_av2.png)](https://www.bilibili.com/video/BV1drHNzLEr2)
+
+#### Multi-view image generation on nuScenes with 3D object layout editing.
+<b>Click the image below</b> to watch the ego view rotate 360° horizontally.
+[![gen_deop_nusc](./assets/gen_drop_nusc.png)](https://www.bilibili.com/video/BV1orHNzLEto)
+
+### Data Augmentation for Perception
+BEV-VAE w/ DiT using the Historical Frame Replacement strategy (randomly replacing real frames with generated ones) improves BEVFormer’s perception by enabling the model to learn invariance of object locations relative to appearance.
+
+| Perception Model | Generative Model |       Augmentation Strategy       | mAP$\uparrow$ | NDS$\uparrow$ |
+|:----------------:|:----------------:|:---------------------------------:|:-------------:|:-------------:|
+|  BEVFormer Tiny  |        -         |                  -                |     25.2      |     35.4      |
+|  BEVFormer Tiny  |      BEVGen      | Training Set + 6k Synthetic Data  |  <b>27.3</b>  |     37.2      |
+|  BEVFormer Tiny  |  BEV-VAE w/ DiT  |   Historical Frame Replacement    |     27.1      |  <b>37.4</b>  |
+
 
 ## TODO
 - [x] releasing the paper
