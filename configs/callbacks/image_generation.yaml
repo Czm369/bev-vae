@@ -1,0 +1,5 @@
+image_generation:
+  _target_: bev_vae.callbacks.image_generation.ImageGeneration
+  save_dir: null # ${paths.output_dir}/images
+  row: 16
+  interval: 1000

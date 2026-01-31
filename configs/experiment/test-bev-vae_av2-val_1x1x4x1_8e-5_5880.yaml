@@ -1,0 +1,23 @@
+# @package _global_
+
+defaults:
+  - override /data: av2-val.yaml
+  - override /model: bev-vae.yaml
+  - override /callbacks: default.yaml
+
+tags: ["test-bev-vae", "av2-val"]
+
+num_nodes: 1
+devices: 1
+batch_size: 4
+accumulate_grad_batches: 1
+real_lr: 8e-5
+max_steps: 5880
+score_cache_size: 5880 # 5880 * 4 = 23520 ~= 23521
+check_interval: 10000 
+
+exp_name: ${tags[0]}_${tags[1]}_${num_nodes}x${devices}x${batch_size}x${accumulate_grad_batches}_${real_lr}_${max_steps}
+
+callbacks:
+  image_generation:
+    interval: 100

@@ -7,7 +7,8 @@ root_dir: ${oc.env:PROJECT_ROOT}
 data_dir: ${paths.root_dir}/data/
 
 # path to logging directory
-log_dir: ${paths.root_dir}/logs/
+# log_dir: ${paths.root_dir}/logs/
+log_dir: ${oc.env:OUTPUT_DIR}
 
 # path to output directory, created dynamically by hydra
 # path generation pattern is specified in `configs/hydra/default.yaml`
@@ -16,3 +17,10 @@ output_dir: ${hydra:runtime.output_dir}
 
 # path to working directory
 work_dir: ${hydra:runtime.cwd}
+ckpt_dir: ${oc.env:CKPT_DIR}
+
+wayve_dir: ${oc.env:WAYVE_DATA_DIR}
+nuscenes_dir: ${oc.env:NUSCENES_DATA_DIR}
+argoverse_dir: ${oc.env:ARGOVERSE_DATA_DIR}
+nuplan_dir: ${oc.env:NUPLAN_DATA_DIR}
+nuimages_dir: ${oc.env:NUIMAGES_DATA_DIR}

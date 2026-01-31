@@ -1,0 +1,25 @@
+_target_: bev_vae.data.datamodule_from_config.DataModuleFromConfig
+train_batch_size: ${batch_size}
+val_batch_size: ${batch_size}
+test_batch_size: ${batch_size}
+num_workers: ${num_workers}
+pin_memory: ${pin_memory}
+test:
+  _target_: bev_vae.data.datasets.nuscenes.nuScenes
+  data_dir: ${paths.nuscenes_dir}
+  split: "val"
+  cam_names: 
+    - CAM_FRONT_LEFT
+    - CAM_FRONT
+    - CAM_FRONT_RIGHT
+    - CAM_BACK_RIGHT
+    - CAM_BACK
+    - CAM_BACK_LEFT
+  other_sensors: ["LIDAR_TOP"]
+  class_num: 10
+  scene_size: ${scene_size}
+  pc: ${pc}
+  with_condition: True
+  return_bev: False
+  cam_res: ${cam_res}
+  augment: False

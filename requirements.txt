@@ -1,24 +1,42 @@
-# --------- pytorch --------- #
-torch>=2.0.0
-torchvision>=0.15.0
-lightning>=2.0.0
-torchmetrics>=0.11.4
-
-# --------- hydra --------- #
+torch==2.1.0
+torchvision==0.16.0
+torchaudio==2.1.0
+pytorch-lightning==2.1.0
 hydra-core==1.3.2
 hydra-colorlog==1.2.0
 hydra-optuna-sweeper==1.2.0
-
-# --------- loggers --------- #
-# wandb
-# neptune-client
-# mlflow
-# comet-ml
-# aim>=3.16.2  # no lower than 3.16.2, see https://github.com/aimhubio/aim/issues/2550
-
-# --------- others --------- #
-rootutils       # standardizing the project root setup
-pre-commit      # hooks for applying linters on commit
-rich            # beautiful text formatting in terminal
-pytest          # tests
-# sh            # for running bash commands in some tests (linux/macos only)
+# waymo-open-dataset-tf-2-12-0==1.6.7
+typing-extensions==4.12
+scikit-image
+pyrootutils   
+pre-commit      
+rich         
+pytest
+av2
+nuscenes-devkit
+einop
+wandb
+tensorboard
+ninja
+fairscale
+deepspeed
+pyquaternion
+datasets
+kornia
+kornia_moons
+ipykernel
+nvidia-cublas-cu12
+pycolmap
+accelerate
+open3d
+PyQt5
+mayavi
+geopandas
+rasterio
+aioboto3
+retry
+transformers==4.47.1
+Pillow==9.5.0
+numpy==1.26.4
+pandas==1.5.3
+rich==14.0.0

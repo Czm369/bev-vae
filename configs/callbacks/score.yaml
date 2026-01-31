@@ -1,0 +1,3 @@
+score:
+  _target_: bev_vae.callbacks.score.Score 
+  cache_size: ${score_cache_size} # > 2048 / batch_size / cam_num

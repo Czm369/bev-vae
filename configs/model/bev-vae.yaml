@@ -1,0 +1,101 @@
+_target_: bev_vae.models.stage1.bev_vae.BEVVAE
+image_key: imgs
+embed_dim: 16
+aug_extrinsic_prob: 0.5
+aug_size: ${aug_size}
+drop_view_prob: 0.
+load_ema: True
+monitor: null
+encoder:
+  _target_: bev_vae.models.stage1.coders.Encoder
+  image_encoder:
+    _target_: bev_vae.models.stage1.image_layers.ImageEncoder
+    image_size: ${image_size}
+    patch_size: 8
+    in_ch: 3
+    out_ch: 768
+    block_num: 12
+    head_num: 12
+    dropout: 0.0
+    bias: False
+    flash_attn: ${flash_attn}
+    ckpt: ${torch_ckpt}
+  scene_encoder:
+    _target_: bev_vae.models.stage1.scene_layers.SceneEncoder
+    in_ch: 768
+    out_ch: 96
+    block_num: 6
+    head_num: 3
+    level_num: 3
+    point_num: 3
+    dropout: 0.0
+    bias: False
+    ckpt: ${torch_ckpt}
+    image_size: ${image_size}
+    scene_size: ${scene_size}
+    pc: ${pc} 
+  state_encoder:
+    _target_: bev_vae.models.stage1.state_layers.StateEncoder
+    scene_size: ${scene_size}
+    patch_size: 4
+    in_ch: 96
+    ch: 6
+    out_ch: 96
+    block_num: 6
+    head_num: 8
+    dropout: 0.0
+    bias: False
+    flash_attn: ${flash_attn}
+    ckpt: ${torch_ckpt}
+decoder:
+  _target_: bev_vae.models.stage1.coders.Decoder
+  state_decoder:
+    _target_: bev_vae.models.stage1.state_layers.StateDecoder
+    scene_size: ${scene_size}
+    patch_size: 4
+    in_ch: 96
+    ch: 6
+    out_ch: 96
+    block_num: 6
+    head_num: 8
+    dropout: 0.0
+    bias: False
+    flash_attn: ${flash_attn}
+    ckpt: ${torch_ckpt}
+  scene_decoder:
+    _target_: bev_vae.models.stage1.scene_layers.SceneDecoder
+    in_ch: 96
+    out_ch: 768
+    block_num: 6
+    head_num: 3
+    level_num: 3
+    point_num: 4
+    dropout: 0.0
+    bias: False
+    ckpt: ${torch_ckpt}
+    image_size: ${image_size}
+    frustum_size: ${frustum_size}
+    pc: ${pc} 
+  image_decoder:
+    _target_: bev_vae.models.stage1.image_layers.ImageDecoder
+    grid_size: [32, 32]
+    patch_size: 8
+    in_ch: 768
+    out_ch: 3
+    block_num: 12
+    head_num: 12
+    dropout: 0.0
+    bias: False
+    flash_attn: ${flash_attn}
+    ckpt: ${torch_ckpt}
+loss:
+  _target_: bev_vae.models.stage1.contperceptual.DummyLoss
+evaluation:
+  _target_: bev_vae.models.inception.InceptionV3
+  ckpt_path: ${oc.env:CKPT_DIR}/fid/pt_inception-2015-12-05-6726825d.pth
+matcher:
+  _target_: bev_vae.models.matcher.Matcher
+  ckpt_path: ${oc.env:CKPT_DIR}/loftr_outdoor.ckpt
+base_lr: 1.0
+scheduler: null
+ckpt_path: ${oc.env:CKPT_DIR}/stage1/bev-vae_329089c03f0d.ckpt

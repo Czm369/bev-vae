@@ -1,0 +1,23 @@
+# @package _global_
+
+defaults:
+  - override /data: nusc-val.yaml
+  - override /model: bev-vae.yaml
+  - override /callbacks: default.yaml
+
+tags: ["test-bev-vae", "nusc-val"]
+
+num_nodes: 1
+devices: 1
+batch_size: 4
+accumulate_grad_batches: 1
+real_lr: 4e-5
+max_steps: 1504
+score_cache_size: 1504 # 1504 * 4 = 6016 ~= 6019
+check_interval: 10000 # 155245 / 1 / 8 / 1 / 1 ~= 19406
+
+exp_name: ${tags[0]}_${tags[1]}_${num_nodes}x${devices}x${batch_size}x${accumulate_grad_batches}_${real_lr}_${max_steps}
+
+callbacks:
+  image_generation:
+    interval: 50

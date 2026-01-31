@@ -27,4 +27,4 @@ test-full: ## Run all tests
 	pytest
 
 train: ## Train the model
-	python src/train.py
+	python bev_vae/train.py

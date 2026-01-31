@@ -1,15 +1,9 @@
-# Scalable and Generalizable Autonomous Driving Scene Synthesis
+# BEV-VAE: A Unified BEV Representation for Generalizable Driving Scene Synthesis
 [Zeming Chen](https://scholar.google.com/citations?hl=zh-CN&user=u_KlPbgAAAAJ), [Hang Zhao](https://scholar.google.com/citations?hl=zh-CN&user=DmahiOYAAAAJ).
 ## Abstract
 <details>
-<summary><b>TL; DR</b> We introduce BEV-VAE, a variational autoencoder that unifies multi-view images into a BEV representation for scalable and generalizable autonomous driving scene synthesis. </summary>
-Generative modeling has shown remarkable success in vision and language, inspiring research on synthesizing autonomous driving scenes. 
-Existing multi-view synthesis approaches commonly operate in image latent spaces with cross-attention to enforce spatial consistency, but they are tightly bound to camera configurations, which limits dataset scalability and model generalization.
-We propose BEV-VAE, a variational autoencoder that unifies multi-view images into a compact bird’s-eye-view (BEV) representation, enabling encoding from arbitrary camera layouts and decoding to any desired viewpoint. 
-Through multi-view image reconstruction and novel view synthesis, we show that BEV-VAE effectively fuses multi-view information and accurately models spatial structure. 
-This capability allows it to generalize across camera configurations and facilitates scalable training on diverse datasets.
-Within the latent space of BEV-VAE, a Diffusion Transformer (DiT) generates BEV representations conditioned on 3D object layouts, enabling multi-view image synthesis with enhanced spatial consistency on nuScenes and achieving the first complete seven-view synthesis on AV2.
-Finally, synthesized imagery significantly improves the perception performance of BEVFormer, highlighting the utility of scalable and generalizable scene synthesis for autonomous driving.
+<summary><b>TL; DR</b> We introduce BEV-VAE, a variational autoencoder that unifies multi-view images into a BEV representation for generalizable autonomous driving scene synthesis. </summary>
+Generative modeling has shown remarkable success in vision and language, inspiring research on synthesizing driving scenes. Existing multi-view synthesis approaches typically operate in image latent spaces with cross-attention to enforce spatial consistency, but they are tightly bound to camera configurations, which limits model generalization. We propose BEV-VAE, a variational autoencoder that learns a unified Bird’s-Eye-View (BEV) representation from multi-view images, enabling encoding from arbitrary camera layouts and decoding to any desired viewpoint. Through multi-view image reconstruction and novel view synthesis, we show that BEV-VAE effectively fuses multi-view information and accurately models spatial structure. This capability allows it to generalize across camera configurations and facilitates scalable training on diverse datasets. Within the latent space of BEV-VAE, a Diffusion Transformer (DiT) generates BEV representations conditioned on 3D object layouts, enabling multi-view image synthesis with enhanced spatial consistency on nuScenes and achieving the first complete seven-view synthesis on AV2. Compared with training generative models in image latent spaces, BEV-VAE achieves superior computational efficiency. Finally, synthesized imagery significantly improves the perception performance of BEVFormer, highlighting the utility of generalizable scene synthesis for autonomous driving.
 </details>
 
 ## Method
@@ -105,6 +99,6 @@ BEV-VAE w/ DiT using the Historical Frame Replacement strategy (randomly replaci
 ## TODO
 - [x] releasing the paper
 - [ ] tutorial
-- [ ] pretrained weight for stage 1&2
-- [ ] inference code 
+- [x] pretrained weights for BEV-VAE
+- [x] inference code 
 - [ ] train code

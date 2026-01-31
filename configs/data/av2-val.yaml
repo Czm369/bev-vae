@@ -1,0 +1,27 @@
+_target_: bev_vae.data.datamodule_from_config.DataModuleFromConfig
+train_batch_size: ${batch_size}
+val_batch_size: ${batch_size}
+test_batch_size: ${batch_size}
+num_workers: ${num_workers}
+pin_memory: ${pin_memory}
+test:
+  _target_: bev_vae.data.datasets.argoverse.Argoverse
+  data_dir: ${paths.argoverse_dir}
+  split: "val"
+  cam_names: 
+    - ring_rear_left
+    - ring_side_left
+    - ring_front_left
+    - ring_front_center
+    - ring_front_right
+    - ring_side_right
+    - ring_rear_right
+  other_sensors: ["lidar"]
+  class_num: 30
+  scene_size: ${scene_size}
+  pc: ${pc}
+  with_condition: True
+  return_bev: False
+  cam_res: ${cam_res}
+  augment: False
+  

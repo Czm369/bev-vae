@@ -2,17 +2,45 @@
 
 defaults:
   - _self_
-  - data: mnist # choose datamodule with `test_dataloader()` for evaluation
-  - model: mnist
-  - logger: null
-  - trainer: default
-  - paths: default
-  - extras: default
-  - hydra: default
+  - data: null
+  - model: null
+  - callbacks: default.yaml
+  - logger: tensorboard.yaml # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
+  - trainer: default.yaml
+  - paths: default.yaml
+  - extras: default.yaml
+  - hydra: default.yaml
+  - experiment: null
 
 task_name: "eval"
 
 tags: ["dev"]
 
-# passing checkpoint path is necessary for evaluation
-ckpt_path: ???
+ckpt_path: null
+
+# seed for random number generators in pytorch, numpy and python.random
+seed: 12345
+
+# data setting
+num_workers: 5
+pin_memory: True
+cam_res: [256, 256]
+image_size: [256, 256]
+tile_size: 256
+scene_size: [8, 128, 128]
+aug_size: [1.0, 0.8, 0.8]
+frustum_size: [60, 32, 32]
+pc: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
+torch_ckpt: False
+flash_attn: False
+
+num_nodes: 1
+devices: 8
+batch_size: 1
+accumulate_grad_batches: 1
+max_steps: 100000
+score_cache_size: 512 # 512 * 4 = 2048 
+check_interval: 10000 
+ema_decay: 0.9999
+class_num: 10
+frame_num: 8
