@@ -19,8 +19,5 @@ output_dir: ${hydra:runtime.output_dir}
 work_dir: ${hydra:runtime.cwd}
 ckpt_dir: ${oc.env:CKPT_DIR}
 
-wayve_dir: ${oc.env:WAYVE_DATA_DIR}
 nuscenes_dir: ${oc.env:NUSCENES_DATA_DIR}
 argoverse_dir: ${oc.env:ARGOVERSE_DATA_DIR}
-nuplan_dir: ${oc.env:NUPLAN_DATA_DIR}
-nuimages_dir: ${oc.env:NUIMAGES_DATA_DIR}

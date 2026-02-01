@@ -11,6 +11,102 @@ Generative modeling has shown remarkable success in vision and language, inspiri
 ![framework](./assets/framework.png)
 In Stage 1, BEV-VAE learns to encode multi-view images into a spatially compact latent space in BEV and reconstruct them, ensuring spatial consistency. In Stage 2, DiT is trained with Classifier-Free Guidance (CFG) in this latent space to generate BEV representations from random noise, which are then decoded into multi-view images.
 
+## Getting Started
+### Environment Setup
+First, create and activate a conda environment:
+```bash
+conda create -n bevvae python=3.10
+conda activate bevvae
+```
+Clone the repository:
+```bash
+git clone https://github.com/Czm369/bev-vae.git
+```
+#### Dependencies
+The code is tested with <b>Python 3.10.x</b> and <b>CUDA 12.x</b>.
+
+Install PyTorch according to your CUDA version:
+##### CUDA 12.1
+```bash
+pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu121
+```
+##### CUDA 12.8
+```bash
+pip install torch==2.7.0 torchvision==0.22.0 torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu128
+```
+#### Install BEV-VAE
+
+```bash
+cd ${ROOT}
+pip install requirements.txt
+pip install -e .
+```
+
+### Data Preparation
+#### nuScenes
+1. Download the nuScenes dataset from the [website](https://www.nuscenes.org/nuscenes) and and place it under `./data/`. 
+2. Download the BEV-VAE preprocessed data from the [website](https://huggingface.co/datasets/czm369/nusc_bev-lidar). This repository provides additional data required by BEV-VAE, including BEV latent representations (`nusc_bev-lidar_train.tar.gz` and `nusc_bev-lidar_val.tar.gz`) encoded from nuScenes.These BEV latents can be decoded into multi-view images using nuScenes (or other compatible, such as AV2) camera configurations. The provided BEV latents can be directly used to train DiT, significantly reducing training cost by skipping the BEV-VAE encoding stage.
+3. After preparation, you should have the following files:
+
+```bash
+bev-vae/data/nusc
+├── maps
+├── samples
+├── sweeps
+├── v1.0-trainval
+└── nusc
+    ├── scene2frame.json
+    ├── scene2sensor2extrinsic.json
+    ├── scene2sensor2intrinsic.json
+    ├── scene2sensor2stamp2token.json
+    ├── scene2stamp2annotation.json
+    ├── sensor_cache.feather
+    ├── synchronization_cache.feather
+    ├── token2ego.json
+    └── token2file.json
+```
+
+#### AV2
+1. Download the AV2 dataset from the [website](https://www.argoverse.org/av2) and and place it under `./data/`. 
+2. Download the BEV-VAE preprocessed data from the [website](https://huggingface.co/datasets/czm369/av2_bev-lidar). This repository provides additional data required by BEV-VAE, including BEV latent representations (`av2_bev-lidar_train.tar.gz` and `av2_bev-lidar_val.tar.gz`) encoded from AV2.These BEV latents can be decoded into multi-view images using AV2 (or other compatible, such as nuScenes) camera configurations. The provided BEV latents can be directly used to train DiT, significantly reducing training cost by skipping the BEV-VAE encoding stage.
+3. After preparation, you should have the following files:
+
+```bash
+bev-vae/data/av2/sensor/
+├── train
+├── val
+└── av2
+    ├── log2sensor2extrinsic.json
+    ├── log2sensor2intrinsic.json
+    ├── log2stamp2annotation.json
+    ├── log2stamp2ego.json
+    ├── sensor_cache.feather
+    └── synchronization_cache.feather
+```
+### Model Preparation
+1. Download the pre-trained BEV-VAE `bev-vae_329089c03f0d.ckpt` from the [website](https://huggingface.co/czm369/BEV-VAE) and place it under `./ckpt/stage1`. 
+2. Download the pre-trained Inception `pt_inception-2015-12-05-6726825d.pth` for FID evaluation from the [website](https://huggingface.co/czm369/BEV-VAE) and place it under `./ckpt/fid`. 
+3. Download the pre-trained LoFTR `loftr_outdoor.ckpt` for MVSC evaluation from the [website](https://huggingface.co/czm369/BEV-VAE) and place it under `./ckpt/`. 
+
+### Model Inference
+
+Before running inference, update the dataset and checkpoint root paths in `eval_single.sh` to match your local environment:
+```bash
+export NUSCENES_DATA_DIR="/root/bev-vae/data/nusc/"
+export ARGOVERSE_DATA_DIR="/root/bev-vae/data/av2/"
+export CKPT_DIR="/root/bev-vae/ckpt/"
+export OUTPUT_DIR="/root/bev-vae/logs/"
+```
+On <b>a single RTX 5090 GPU</b>, BEV-VAE can perform <b>multi-view image reconstruction</b> with `batch_size=4` at least.
+#### nuScenes
+```bash
+bash eval_single.sh test-bev-vae_nusc-val_1x1x4x1_4e-5_1504
+```
+#### AV2
+```bash
+bash eval_single.sh test-bev-vae_av2-val_1x1x4x1_8e-5_5880
+```
+
 ## Experiments
 
 ### Datasets
@@ -98,7 +194,7 @@ BEV-VAE w/ DiT using the Historical Frame Replacement strategy (randomly replaci
 
 ## TODO
 - [x] releasing the paper
-- [ ] tutorial
+- [x] tutorial
 - [x] pretrained weights for BEV-VAE
 - [x] inference code 
 - [ ] train code
