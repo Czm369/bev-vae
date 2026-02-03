@@ -35,7 +35,7 @@ geopandas
 rasterio
 aioboto3
 retry
-transformers==4.47.1
+transformers==5.0.0
 Pillow==9.5.0
 numpy==1.26.4
 pandas==1.5.3
