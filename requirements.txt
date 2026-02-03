@@ -36,7 +36,7 @@ rasterio
 aioboto3
 retry
 transformers==4.47.1
-Pillow==9.5.0
+Pillow==12.1.0
 numpy==1.26.4
 pandas==1.5.3
 rich==14.0.0
